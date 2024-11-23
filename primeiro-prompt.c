@@ -16,6 +16,15 @@ void swap_rows(double A[N][N+1], int row1, int row2) {
     }
 }
 
+void printMatrix(double A[N][N+1]){
+    for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N + 1; j++) {
+                printf("%6.2f ", A[i][j]);
+            }
+            printf("\n");
+        }
+}
+
 int main(int argc, char** argv) {
     int rank, size;
 
@@ -32,12 +41,7 @@ int main(int argc, char** argv) {
 
     if (rank == 0) {
         printf("Matriz inicial (A|b):\n");
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N + 1; j++) {
-                printf("%6.2f ", A[i][j]);
-            }
-            printf("\n");
-        }
+        printMatrix(A);
     }
 
     // Etapa de eliminação
@@ -59,15 +63,23 @@ int main(int argc, char** argv) {
 
         // Broadcast da matriz atualizada
         MPI_Bcast(&A[0][0], N * (N + 1), MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
+        //printf("O processo com ranque %d recebeu o valor: %f\n",rank, A[0][0]);
         // Paralelizar a eliminação de linhas abaixo de k
-        for (int i = k + 1 + rank; i < N; i += size) {
-            double factor = A[i][k] / A[k][k];
-            for (int j = k; j < N + 1; j++) {
-                A[i][j] -= factor * A[k][j];
+        for (int i = k + 1; i < N; i++) {
+            if (i % size == rank) { // Round Robin: só processa se for a vez do rank atual
+                //printf("_______________\n");
+                //printf("k = %d, rank = %d\n", k, rank);
+                double factor = A[i][k] / A[k][k];
+                //printf("factor %d: %lf", k, factor);
+                for (int j = k; j < N + 1; j++) {
+                    A[i][j] -= factor * A[k][j];
+                    //printf("| A[%d][%d]: %lf", i, j, A[i][j]);
+                }
+                //printf("\n");
             }
         }
-
+        // printMatrix(A);
+        // printf("_______________\n");
         // Reunir a matriz em todos os processos
         MPI_Allgather(MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, &A[0][0], N * (N + 1) / size, MPI_DOUBLE, MPI_COMM_WORLD);
     }
@@ -75,6 +87,7 @@ int main(int argc, char** argv) {
     // Resolver o sistema (substituição regressiva)
     double x[N];
     if (rank == 0) {
+        //printMatrix(A);
         for (int i = N - 1; i >= 0; i--) {
             x[i] = A[i][N];
             for (int j = i + 1; j < N; j++) {
@@ -83,7 +96,7 @@ int main(int argc, char** argv) {
             x[i] /= A[i][i];
         }
 
-        // Exibir solução
+        //Exibir solução
         printf("\nSolução do sistema:\n");
         for (int i = 0; i < N; i++) {
             printf("x[%d] = %6.2f\n", i, x[i]);
