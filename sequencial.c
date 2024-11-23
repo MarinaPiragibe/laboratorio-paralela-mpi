@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #define N 3
 
@@ -11,7 +12,10 @@ void swap_rows(double A[N][N+1], int row1, int row2) {
     }
 }
 
-int main() {
+int main(int argc, char** argv) {
+    clock_t tempo_inicial, tempo_final; 
+    tempo_inicial = clock(); 
+
     double A[N][N+1] = {
         {2, -1, 1, 3},
         {1, 3, 2, 12},
@@ -55,6 +59,11 @@ int main() {
     for (int i = 0; i < N; i++) {
         printf("x[%d] = %6.2f\n", i, x[i]);
     }
+    // Exibir tempo
+    tempo_final = clock();
+    double tempo_execucao = ((double)(tempo_final - tempo_inicial)) / CLOCKS_PER_SEC;
+    printf("\nTempo de Execução:\n");
+    printf("%f segundos\n", tempo_execucao);
 
     return 0;
 }

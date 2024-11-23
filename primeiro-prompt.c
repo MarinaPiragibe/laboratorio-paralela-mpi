@@ -27,10 +27,12 @@ void printMatrix(double A[N][N+1]){
 
 int main(int argc, char** argv) {
     int rank, size;
+    float tempo_inicial, tempo_final;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    tempo_inicial = MPI_Wtime();
 
     // Matriz aumentada (A|b)
     double A[N][N+1] = {
@@ -101,6 +103,12 @@ int main(int argc, char** argv) {
         for (int i = 0; i < N; i++) {
             printf("x[%d] = %6.2f\n", i, x[i]);
         }
+
+        // Exibir tempo
+        tempo_final = MPI_Wtime();
+        printf("\nTempo de Execução:\n");
+        printf("%f\n", tempo_final - tempo_inicial);
+        
     }
 
     MPI_Finalize();
