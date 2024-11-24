@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     // Exibir tempo
     tempo_final = clock();
     double tempo_execucao = ((double)(tempo_final - tempo_inicial)) / CLOCKS_PER_SEC;
-    printf("\nTempo de Execução:\n");
+    printf("\nTempo de Execução: ");
     printf("%f segundos\n", tempo_execucao);
 
     return 0;

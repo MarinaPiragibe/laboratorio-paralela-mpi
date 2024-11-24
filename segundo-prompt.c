@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
         }
         // Exibir tempo
         tempo_final = MPI_Wtime();
-        printf("\nTempo de Execução:\n");
+        printf("\nTempo de Execução: ");
         printf("%f\n", tempo_final - tempo_inicial);
     }
 
