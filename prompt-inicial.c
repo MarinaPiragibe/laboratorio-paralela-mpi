@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     tempo_inicial = MPI_Wtime();
 
-    int n = 100; // Tamanho da matriz
+    int n = 320; // Tamanho da matriz
     double *A = malloc(n * n * sizeof(double));
     double *b = malloc(n * sizeof(double));
     double *x = malloc(n * sizeof(double));

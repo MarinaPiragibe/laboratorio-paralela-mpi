@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#define N 100 // Dimensão do sistema (exemplo: 3x3)
+#define N 320 // Dimensão do sistema (exemplo: 320x320)
 
 void printMatrix(double *A)
 {

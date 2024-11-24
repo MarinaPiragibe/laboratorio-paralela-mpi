@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#define N 3 // Dimensão do sistema
+#define N 320 // Dimensão do sistema
 
 void printMatrix(double *A, int n)
 {
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
         }
 
         tempo_final = MPI_Wtime();
-        printf("\nTempo de execução: %f segundos\n", tempo_final - tempo_inicial);
+        printf("\nTempo de Execução: %f", tempo_final - tempo_inicial);
 
         free(full_matrix);
     }
