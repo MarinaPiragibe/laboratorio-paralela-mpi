@@ -6,24 +6,24 @@ compile-all: compile-first compile-segundo compile-sequencial
 
 # Compile targets
 compile-first:
-	mpicc -o primeiro-prompt primeiro-prompt.c
+	mpicc -o prompt-inicial prompt-inicial.c
 
 compile-segundo:
-	mpicc -o segundo-prompt segundo-prompt.c
+	mpicc -o prompt-modificado prompt-modificado.c
 
 compile-sequencial:
 	mpicc -o sequencial sequencial.c
 
-run-all: primeiro-prompt segundo-prompt sequencial
+run-all: prompt-inicial prompt-modificado sequencial
 
 # Run binaries with MPI
-primeiro-prompt: compile-first
+prompt-inicial: compile-first
 	mpirun -np 1 ./$@  > runs/$@-1-$(UUID).txt
 	mpirun -np 2 ./$@  > runs/$@-2-$(UUID).txt
-	mpirun -np 4 ./$@  > runs/$@-4-$(UUID).txt
+	mpirun -np 4 ./$@  > runs/$@-4-$(UUID).txt 
 	mpirun -np 8 ./$@  > runs/$@-8-$(UUID).txt
 
-segundo-prompt: compile-segundo
+prompt-modificado: compile-segundo
 	mpirun -np 1 ./$@  > runs/$@-1-$(UUID).txt
 	mpirun -np 2 ./$@  > runs/$@-2-$(UUID).txt
 	mpirun -np 4 ./$@  > runs/$@-4-$(UUID).txt
@@ -33,4 +33,4 @@ sequencial: compile-sequencial
 	mpirun -np 1 ./$@  > runs/$@-1-$(UUID).txt
 
 clean:
-	rm -rf primeiro-prompt segundo-prompt sequencial runs/*
+	rm -rf prompt-inicial prompt-modificado sequencial runs/*

@@ -4,7 +4,7 @@
 #include <time.h>
 #include <math.h>
 
-#define N 3 // Dimensão do sistema (exemplo: 3x3)
+#define N 100 // Dimensão do sistema (exemplo: 3x3)
 
 void printMatrix(double *A)
 {
@@ -122,7 +122,11 @@ int main(int argc, char *argv[])
         printMatrix(&augmented[0][0]);
         printf("\n");
     }
-
+    // double augmented[N][N + 1]= {
+    //     {2, -1, 1, 3},
+    //     {1, 3, 2, 12},
+    //     {1, -1, 2, 5}
+    // };
     // Transmissão inicial da matriz aumentada
     MPI_Bcast(augmented, N * (N + 1), MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -138,8 +142,7 @@ int main(int argc, char *argv[])
         }
         // Exibir tempo
         tempo_final = MPI_Wtime();
-        printf("\nTempo de Execução: ");
-        printf("%f\n", tempo_final - tempo_inicial);
+        printf("\nTempo de Execução: %f\n", tempo_final - tempo_inicial);
     }
 
     MPI_Finalize();

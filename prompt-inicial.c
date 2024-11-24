@@ -71,10 +71,11 @@ void back_substitution(double *A, double *b, double *x, int n, int rank, int siz
 int main(int argc, char *argv[])
 {
     MPI_Init(&argc, &argv);
-
+    double tempo_inicial, tempo_final;
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    tempo_inicial = MPI_Wtime();
 
     int n = 100; // Tamanho da matriz
     double *A = malloc(n * n * sizeof(double));
@@ -100,6 +101,8 @@ int main(int argc, char *argv[])
         {
             printf("x[%d] = %f\n", i, x[i]);
         }
+        tempo_final = MPI_Wtime();
+        printf("Tempo de Execução: %f", tempo_final - tempo_inicial);
     }
 
     free(A);
