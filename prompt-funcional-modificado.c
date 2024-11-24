@@ -1,6 +1,8 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
 #define N 3 // Dimensão do sistema (exemplo: 3x3)
 
@@ -13,6 +15,38 @@ void printMatrix(double *A)
             printf("%6.2f ", A[i * (N + 1) + j]);
         }
         printf("\n");
+    }
+}
+
+void generateRandomMatrix(double *matrix, int n)
+{
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
+
+    // Gera os coeficientes da matriz e o vetor de termos independentes
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j <= n; j++)
+        {
+            // Gera números aleatórios entre -10 e 10 com 2 casas decimais
+            double random_value = ((double)rand() / RAND_MAX) * 20.0 - 10.0;
+            matrix[i * (n + 1) + j] = random_value;
+        }
+    }
+
+    // Garante que a diagonal principal tenha valores dominantes
+    // para melhorar a estabilidade numérica
+    for (int i = 0; i < n; i++)
+    {
+        double row_sum = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (i != j)
+            {
+                row_sum += fabs(matrix[i * (n + 1) + j]);
+            }
+        }
+        // Faz o elemento da diagonal ser maior que a soma dos outros elementos
+        matrix[i * (n + 1) + i] = row_sum + ((double)rand() / RAND_MAX) * 5.0 + 1.0;
     }
 }
 
@@ -79,23 +113,26 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    int n = 3; // Tamanho fixo para esta matriz
-    double augmented[N][N + 1] = {
-        {2, -1, 1, 3},
-        {1, 3, 2, 12},
-        {1, -1, 2, 5}};
-    double x[3] = {0};
+    double augmented[N][N + 1];
+    double x[N] = {0};
+    if (rank == 0)
+    {
+        generateRandomMatrix(&augmented[0][0], N);
+        printf("Matriz gerada:\n");
+        printMatrix(&augmented[0][0]);
+        printf("\n");
+    }
 
     // Transmissão inicial da matriz aumentada
-    MPI_Bcast(augmented, n * (n + 1), MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(augmented, N * (N + 1), MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    gauss_elimination(&augmented[0][0], n, rank, size);
-    back_substitution(&augmented[0][0], x, n, rank, size);
+    gauss_elimination(&augmented[0][0], N, rank, size);
+    back_substitution(&augmented[0][0], x, N, rank, size);
 
     if (rank == 0)
     {
         printf("Resultado:\n");
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < N; i++)
         {
             printf("x[%d] = %f\n", i, x[i]);
         }
